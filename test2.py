@@ -18,7 +18,7 @@ pagelist="123"
 i=iter(pagelist)
 page="page"
 page1btn = tkinter.Button(window, text="Next", command=page+next(i))
-page2btn = tkinter.Button(window, text="Çık", command=quit)
+page2btn = tkinter.Button(window, text="Exit", command=quit)
 
 page1text = tkinter.Label(window, text="This is page 1")
 page2text = tkinter.Label(window, text="This is page 2")
