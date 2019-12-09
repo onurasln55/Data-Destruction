@@ -4,35 +4,30 @@ from tkinter.ttk import Combobox
 # --- functions ---
 
 def page1():
-    buttons["1"].pack_forget()    
-    buttons["2"].pack()
-    buttons["3"].pack_forget()
-    buttons["4"].pack_forget()
-    
     labels["1"].pack()
     labels["2"].pack_forget()
     labels["3"].pack_forget()
     labels["4"].pack_forget()
 
-def page2():
     buttons["1"].pack_forget()    
-    buttons["2"].pack_forget()
-    buttons["3"].pack()
+    buttons["2"].pack()
+    buttons["3"].pack_forget()
     buttons["4"].pack_forget()
 
+def page2():
     labels["1"].pack_forget()
     labels["2"].pack()
     labels["3"].pack_forget()
     labels["4"].pack_forget()
 
     combobox["1"].pack()
-
-def page3():
+    
     buttons["1"].pack_forget()    
     buttons["2"].pack_forget()
-    buttons["3"].pack_forget()
-    buttons["4"].pack()
+    buttons["3"].pack()
+    buttons["4"].pack_forget()
 
+def page3():
     labels["1"].pack_forget()
     labels["2"].pack_forget()
     labels["3"].pack()
@@ -42,20 +37,25 @@ def page3():
     label= tk.Label(root,text=combobox["1"].get())
     label.pack()
     combobox["1"].pack_forget()
-
-def page4():
+    
     buttons["1"].pack_forget()    
     buttons["2"].pack_forget()
     buttons["3"].pack_forget()
-    buttons["4"].pack_forget()
-    buttons["5"].pack()
+    buttons["4"].pack()
 
+def page4():
     labels["1"].pack_forget()
     labels["2"].pack_forget()
     labels["3"].pack_forget()
     labels["4"].pack()
 
     combobox["1"].pack_forget()
+    
+    buttons["1"].pack_forget()    
+    buttons["2"].pack_forget()
+    buttons["3"].pack_forget()
+    buttons["4"].pack_forget()
+    buttons["5"].pack()
 # --- main ---
 
 root = tk.Tk()
