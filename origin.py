@@ -1,0 +1,22 @@
+from tkinter import *
+from tkinter.ttk import Combobox
+root =Tk()
+root.attributes('-fullscreen', True)
+root.bind('<Escape>',lambda e:root.destroy())
+root.configure(background="white")
+baslik=Label(root,text="Pro Wipe", font=("Arial Bold",50))
+baslik.configure(background="white")
+baslik.grid(row=0,column=1)
+#subprocess.check_output("parted","-l")
+#liste=liste.decode()
+#liste=liste.strip().split()
+listebaslik=Label(root,text="aaaaaaaaaaaaa")
+listebaslik.grid(row=1,column=1)
+cik=Button(root,text="Çıkış",command=quit)
+cik.grid(row=2,column=2)
+
+listeleme=Combobox(root,width=100)
+listeleme.grid(row=2,column=0)
+sil = Button(root, text="Sec")
+sil.grid(row=3,column=1)
+root.mainloop()
