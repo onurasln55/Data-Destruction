@@ -20,7 +20,7 @@ def page1():
     buttons["3"].pack_forget()
     buttons["33"].pack_forget()
     buttons["4"].pack_forget()
-   
+
     buttons["yenile"].pack_forget()
 
 def page2():
@@ -206,7 +206,7 @@ labels = {
 }
 pgbar=Progressbar(root,length=200,orient=HORIZONTAL,maximum=100,value=0)
 labels["başlık"].pack(expand=YES,fill=BOTH)
-mlb = MultiListbox(tk, (('Subject', 40), ('Sender', 20), ('Date', 10)))
+mlb = MultiListbox(root, (('Subject', 40), ('Sender', 20), ('Date', 10)))
 for i in range(1000):
     mlb.insert(END, ('test321 %d' % i, 'test', '10/10/%04d' % (1900 + i)))
 mlb.pack(expand=YES, fill=BOTH)
