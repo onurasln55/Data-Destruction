@@ -99,8 +99,7 @@ def refresh():
             model[x]=model[x].replace('\n','')
             name[x]=name[x].replace('\n','')
             mlb.insert(END, ('%s' % name[x], '%s'% model[x], '%s' % serial[x], '%s'% size[x],'%s'% state[x],))
-    time.sleep(1)
-    refresh()
+    
 
 
 
