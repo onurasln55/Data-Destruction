@@ -90,6 +90,7 @@ def refresh():
     for line in state:
         count = count + 1
 
+    mlb.delete(0, END)
     for x in range(0,count):
         if "running" in state[x]:
             state[x]=state[x].replace('\n','')
