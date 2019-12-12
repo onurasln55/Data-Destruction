@@ -97,7 +97,7 @@ def refresh():
             serial[x]=serial[x].replace('\n','')
             model[x]=model[x].replace('\n','')
             name[x]=name[x].replace('\n','')
-            mlb.insert(END, ('%d' % name[x], '%d'% model[x], '%d' % serial[x], '%d'% size[x], pgbars["1"].pack(),'%d'% state[x],))
+            mlb.insert(END, ('%s' % name[x], '%s'% model[x], '%s' % serial[x], '%s'% size[x], pgbars["1"].pack(),'%s'% state[x],))
 
 
 
