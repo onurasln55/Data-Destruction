@@ -229,7 +229,6 @@ pgbars={
     "1":Progressbar(root,length=200,orient=HORIZONTAL,maximum=100,value=0)}
 labels["başlık"].pack(expand=YES,fill=BOTH)
 mlb = MultiListbox(tk, (('Bağlantı Noktası', 15), ('Cihaz Adı', 50), ('Seri Numarası', 20), ('Boyut', 10), ('İlerleme', 25), ('Durum', 20)))
-mlb.pack(expand=YES, fill=BOTH)
 
 
 buttons["2"].pack()
