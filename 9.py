@@ -3,11 +3,13 @@ from tkinter import *
 from tkinter.ttk import *
 import os
 
+
 # --- functions ---
 import apply as apply
 
 
 def page1():
+
     labels["2"].pack_forget()
     labels["3"].pack_forget()
     labels["4"].pack_forget()
@@ -17,14 +19,13 @@ def page1():
 
     buttons["1"].pack_forget()
     buttons["11"].pack_forget()
-    buttons["2"].pack(side=tk.BOTTOM, anchor=tk.SE)
+    buttons["2"].pack(side=tk.BOTTOM,anchor=tk.SE)
     buttons["22"].pack_forget()
     buttons["3"].pack_forget()
     buttons["33"].pack_forget()
     buttons["4"].pack_forget()
 
     buttons["yenile"].pack_forget()
-
 
 def page2():
     labels["2"].pack()
@@ -33,15 +34,16 @@ def page2():
     anasol.pack(side=LEFT)
     anasag.pack(side=RIGHT)
     mlb.pack(expand=YES, fill=BOTH)
-
+    refresh()
     buttons["1"].pack_forget()
-
+    yaz.pack()
+    a()
     buttons["2"].pack_forget()
     buttons["22"].pack_forget()
-    buttons["3"].pack(side=tk.RIGHT, anchor=tk.S)
-    buttons["11"].pack(side=tk.RIGHT, anchor=tk.S)
+    buttons["3"].pack(side=tk.RIGHT,anchor=tk.S)
+    buttons["11"].pack(side=tk.RIGHT,anchor=tk.S)
     buttons["4"].pack_forget()
-    buttons["yenile"].pack(side=tk.RIGHT, anchor=tk.S)
+    buttons["yenile"].pack(side=tk.RIGHT,anchor=tk.S)
 
     refresh()
 
@@ -56,9 +58,9 @@ def page3():
     buttons["1"].pack_forget()
     buttons["11"].pack_forget()
     buttons["2"].pack_forget()
-    buttons["22"].pack(side=tk.BOTTOM, anchor=tk.SE)
+    buttons["22"].pack(side=tk.BOTTOM,anchor=tk.SE)
     buttons["3"].pack_forget()
-    buttons["4"].pack(side=tk.BOTTOM, anchor=tk.SE)
+    buttons["4"].pack(side=tk.BOTTOM,anchor=tk.SE)
     buttons["yenile"].pack_forget()
 
 
@@ -76,39 +78,48 @@ def page4():
     buttons["3"].pack_forget()
     buttons["33"].pack_forget()
     buttons["4"].pack_forget()
-    buttons["5"].pack(side=tk.BOTTOM, anchor=tk.SE)
+    buttons["5"].pack(side=tk.BOTTOM,anchor=tk.SE)
     buttons["yenile"].pack_forget()
-
-
 def refresh():
+    #mlb.after(4000,refresh)
     os.system('lsblk /dev/sd* --nodeps --output NAME >name.lst')
     os.system('lsblk /dev/sd* --nodeps --output MODEL >model.lst')
     os.system('lsblk /dev/sd* --nodeps --output SERIAL >serial.lst')
     os.system('lsblk /dev/sd* --nodeps --output SIZE >size.lst')
     os.system('lsblk /dev/sd* --nodeps --output STATE >state.lst')
-    name = open("name.lst", "r")
+    name = open("name.lst","r")
     model = open("model.lst", "r")
     serial = open("serial.lst", "r")
     size = open("size.lst", "r")
-    status = open("state.lst", "r")
-    name = name.readlines()
-    model = model.readlines()
-    serial = serial.readlines()
-    size = size.readlines()
-    status = status.readlines()
+    state = open("state.lst", "r")
+    name=name.readlines()
+    model=model.readlines()
+    serial=serial.readlines()
+    size=size.readlines()
+    state=state.readlines()
     count = 0
-    for line in status:
+    for line in state:
         count = count + 1
-
+    
     mlb.delete(0, END)
-    for x in range(0, count):
-        if "running" in status[x]:
-            status[x] = status[x].replace('\n', '')
-            size[x] = size[x].replace('\n', '')
-            serial[x] = serial[x].replace('\n', '')
-            model[x] = model[x].replace('\n', '')
-            name[x] = name[x].replace('\n', '')
-            mlb.insert(END, ('%s' % name[x], '%s' % model[x], '%s' % serial[x], '%s' % size[x], '%s' % state[x],))
+    for x in range(0,count):
+        if "running" in state[x]:
+            state[x]=state[x].replace('\n','')
+            size[x]=size[x].replace('\n','')
+            serial[x]=serial[x].replace('\n','')
+            model[x]=model[x].replace('\n','')
+            name[x]=name[x].replace('\n','')
+            mlb.insert(END, ('%s' % name[x], '%s'% model[x], '%s' % serial[x], '%s'% size[x],'%s'% state[x],))
+
+
+def a():
+    yaz.after(100,a)
+    if mlb.curselection():
+        sel=mlb.curselection()
+        
+        yaz.config(text=str(sel))
+
+
 
 
 class MultiListbox(Frame):
@@ -131,9 +142,9 @@ class MultiListbox(Frame):
         frame = Frame(self);
         frame.pack(side=LEFT, fill=Y)
         Label(frame, borderwidth=1, relief=RAISED).pack(fill=X)
-        # sb = Scrollbar(frame, orient=VERTICAL, command=self._scroll)
-        # sb.pack(expand=YES, fill=Y)
-        # self.lists[0]['yscrollcommand'] = sb.set
+        #sb = Scrollbar(frame, orient=VERTICAL, command=self._scroll)
+        #sb.pack(expand=YES, fill=Y)
+        #self.lists[0]['yscrollcommand'] = sb.set
 
     def _select(self, y):
         row = self.lists[0].nearest(y)
@@ -149,9 +160,9 @@ class MultiListbox(Frame):
         for l in self.lists: l.scan_dragto(x, y)
         return 'break'
 
-    # def _scroll(self, *args):
-    #   for l in self.lists:
-    #      apply(l.yview, args)
+    #def _scroll(self, *args):
+     #   for l in self.lists:
+      #      apply(l.yview, args)
 
     def curselection(self):
         return self.lists[0].curselection()
@@ -213,7 +224,7 @@ func = {  # sayfalar için fonksiyon
     "2": page2,
     "3": page3,
     "4": page4,
-    "yenile": refresh,
+    "yenile":refresh,
 
 }
 
@@ -236,42 +247,24 @@ labels = {
     "4": tk.Label(root, text="İşlem Tamam"),
 }
 
-screen_width = root.winfo_screenwidth()
-
+screen_width=root.winfo_screenwidth()
 def genislik():
-    if screen_width > 1300:
-        genislik = screen_width * 50 / 100
-    elif screen_width < 1301:
-        genislik = screen_width * 60 / 100
+    if screen_width>1300:
+        genislik=screen_width*50/100
+    elif screen_width<1301:
+        genislik=screen_width*60/100
     return genislik
-
-anasol = Frame(root)
+anasol=Frame(root)
 anasol.config(width=genislik())
-anasag = Frame(root)
-anasag.config(width=screen_width - genislik())
-
-pgbars = {
-    "1": Progressbar(root, length=200, orient=HORIZONTAL, maximum=100, value=0)}
-labels["başlık"].pack(expand=YES, fill=BOTH)
-mlb = MultiListbox(anasol,
-                   (('Bağlantı Noktası', 15), ('Cihaz Adı', 50), ('Seri Numarası', 20), ('Boyut', 10), ('Durum', 20)))
-
-class info(Frame,refresh()):
-    def __init__(self, master):
-        Frame.__init__(self, master)
-        frame = Frame(self);
-        frame.pack(side=LEFT, fill=Y)
-        self.smartbilgisi = Label(self.frame)
-
-    def smart(self):
-        self.smart.after(1000,self.smart)
-        refresh()
-
-
-
-
+anasag=Frame(root)
+anasag.config(width=screen_width-genislik())
+yaz=Label(anasag)
+pgbars={
+    "1":Progressbar(root,length=200,orient=HORIZONTAL,maximum=100,value=0)}
+labels["başlık"].pack(expand=YES,fill=BOTH)
+mlb = MultiListbox(anasol, (('Bağlantı Noktası', 15), ('Cihaz Adı', 50), ('Seri Numarası', 20), ('Boyut', 10), ('Durum', 20)))
 buttons["2"].pack()
-
 footer.pack(side=BOTTOM)
 root.mainloop()
+
 
