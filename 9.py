@@ -37,6 +37,7 @@ def page2():
     refresh()
     buttons["1"].pack_forget()
     yaz.pack()
+    yaz2.pack()
     a()
     buttons["2"].pack_forget()
     buttons["22"].pack_forget()
@@ -53,6 +54,7 @@ def page3():
     labels["3"].pack()
     labels["4"].pack_forget()
     mlb.pack_forget()
+    Label(root,text=mlb.get(ACTIVE)).pack()
     anasol.pack_forget()
     anasag.pack_forget()
     buttons["1"].pack_forget()
@@ -100,7 +102,7 @@ def refresh():
     count = 0
     for line in state:
         count = count + 1
-    
+
     mlb.delete(0, END)
     for x in range(0,count):
         if "running" in state[x]:
@@ -113,13 +115,16 @@ def refresh():
 
 
 def a():
-    yaz.after(100,a)
+    yaz2.after(100,a)
     if mlb.curselection():
         sel=mlb.curselection()
-        
+        sell=mlb.get(sel)
+        yaz2.config(text=sell[0])
         yaz.config(text=str(sel))
 
-
+def sredd():
+    disk = mlb.get(ACTIVE)
+    print(disk[2])
 
 
 class MultiListbox(Frame):
@@ -259,6 +264,7 @@ anasol.config(width=genislik())
 anasag=Frame(root)
 anasag.config(width=screen_width-genislik())
 yaz=Label(anasag)
+yaz2=Label(anasag)
 pgbars={
     "1":Progressbar(root,length=200,orient=HORIZONTAL,maximum=100,value=0)}
 labels["başlık"].pack(expand=YES,fill=BOTH)
