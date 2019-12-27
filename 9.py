@@ -246,7 +246,7 @@ buttons = {  # butonlar için fonksiyonlar
 }
 
 labels = {
-    "başlık": tk.Label(root, text="PROWIPE", font=("Arial Bold", 50)),
+    "başlık": tk.Label(root, text="WIPE", font=("Arial Bold", 50)),
     "2": tk.Label(root, text="Disk Seçin ve imha edin"),
     "3": tk.Label(root, text="İmha işlemi sürüyor... "),
     "4": tk.Label(root, text="İşlem Tamam"),
