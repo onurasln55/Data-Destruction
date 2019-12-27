@@ -122,9 +122,21 @@ def a():
         yaz2.config(text=sell[0])
         yaz.config(text=str(sel))
 
-def sredd():
-    disk = mlb.get(ACTIVE)
-    print(disk[2])
+def inf():
+    info.after(100,inf)
+    if mlb.curselection():
+        index=getir()
+        value=mlb.get(index)
+        info.config(text=value)
+        print(index)
+
+def getir():
+    index=str(mlb.curselection())
+    index=index.replace('(' ,'')
+    index=index.replace(',)','')
+    index=int(index)
+    return index
+
 
 
 class MultiListbox(Frame):
@@ -263,8 +275,9 @@ anasol=Frame(root)
 anasol.config(width=genislik())
 anasag=Frame(root)
 anasag.config(width=screen_width-genislik())
-yaz=Label(anasag)
+info=Label(anasag)
 yaz2=Label(anasag)
+inf()
 pgbars={
     "1":Progressbar(root,length=200,orient=HORIZONTAL,maximum=100,value=0)}
 labels["başlık"].pack(expand=YES,fill=BOTH)
@@ -272,5 +285,4 @@ mlb = MultiListbox(anasol, (('Bağlantı Noktası', 15), ('Cihaz Adı', 50), ('S
 buttons["2"].pack()
 footer.pack(side=BOTTOM)
 root.mainloop()
-
 
