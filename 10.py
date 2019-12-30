@@ -31,21 +31,23 @@ def page2():
     anasag.pack(side=RIGHT)
     bilgi.pack()
     mlb.pack(expand=YES, fill=BOTH)
-    refresh()
+
     buttons["1"].pack_forget()
     buttons["2"].pack_forget()
     buttons["22"].pack_forget()
-    buttons["3"].pack(side=tk.RIGHT,anchor=tk.S)
-    buttons["11"].pack(side=tk.RIGHT,anchor=tk.S)
+    buttons["3"].pack()
+    buttons["11"].pack()
     buttons["4"].pack_forget()
-    buttons["yenile"].pack(side=tk.RIGHT,anchor=tk.S)
+    buttons["yenile"].pack()
+    refresh()
+    smart()
 
 def page3():
     labels["2"].pack_forget()
     labels["3"].pack()
     labels["4"].pack_forget()
     mlb.pack_forget()
-    Label(root,text=mlb.get(ACTIVE)).pack()
+    Label(root,text=mlb.get(disk)).pack()
     anasol.pack_forget()
     anasag.pack_forget()
     buttons["1"].pack_forget()
@@ -75,7 +77,8 @@ def page4():
 #pages end
 # --- functions ---
 def refresh():
-    #mlb.after(4000,refresh)
+    mlb.after(1000,refresh)
+
     os.system('lsblk /dev/sd* --nodeps --output NAME >name.lst')
     os.system('lsblk /dev/sd* --nodeps --output MODEL >model.lst')
     os.system('lsblk /dev/sd* --nodeps --output SERIAL >serial.lst')
@@ -196,10 +199,12 @@ class MultiListbox(Frame):
             l.selection_set(first, last)
 def smart():
     bilgi.after(100,smart)
-    index=getir()
-    value=mlb.get(index)
+    global disk
+    disk=getir()
+    value=mlb.get(disk)
     bilgi.config(text=value)
-    print(index)
+    print(disk)
+    return disk
 def getir():
     if mlb.curselection():
         index=str(mlb.curselection())
@@ -209,57 +214,54 @@ def getir():
         return index
 
 # --- main ---
-if __name__ == '__main__':
-    root = tk.Tk()
-    footer=Frame(root)
-    # root.attributes('-fullscreen',True)
-    # lisans=tk.Entry(root)#lisans girdisi
-    func = {  # sayfalar için fonksiyon
-        "1": page1,
-        "2": page2,
-        "3": page3,
-        "4": page4,
-        "yenile": refresh,
 
-    }
-    buttons = {  # butonlar için fonksiyonlar
-        "1": tk.Button(footer, text="Sonraki ", command=func["1"]),
-        "11": tk.Button(footer, text="Önceki", command=func["1"]),
-        "2": tk.Button(footer, text="Sonraki", command=func["2"]),
-        "22": tk.Button(footer, text="Önceki", command=func["2"]),
-        "3": tk.Button(footer, text="Sonraki ", command=func["3"]),
-        "33": tk.Button(footer, text="Önceki", command=func["3"]),
-        "4": tk.Button(footer, text="Sonraki ", command=func["4"]),
-        "5": tk.Button(footer, text="Çıkış", command=quit),
-        "yenile": tk.Button(footer, text="Yenile ", command=func["yenile"]),
-    }
-    labels = {
-        "başlık": tk.Label(root, text="WIPE", font=("Arial Bold", 50)),
-        "2": tk.Label(root, text="Disk Seçin ve imha edin"),
-        "3": tk.Label(root, text="İmha işlemi sürüyor... "),
-        "4": tk.Label(root, text="İşlem Tamam"),
-    }
+root = tk.Tk()
+footer=Frame(root)
+root.attributes('-fullscreen',True)
+# lisans=tk.Entry(root)#lisans girdisi
+func = {  # sayfalar için fonksiyon
+    "1": page1,
+    "2": page2,
+    "3": page3,
+    "4": page4,
+    "yenile": refresh,
 
-    screen_width=root.winfo_screenwidth()
-    def genislik():
-        if screen_width>1300:
-            genislik=screen_width*50/100
-        elif screen_width<1301:
-            genislik=screen_width*60/100
-        return genislik
-    anasol=Frame(root)
-    anasol.config(width=genislik())
-    anasag=Frame(root)
-    anasag.config(width=screen_width-genislik())
-    bilgi=Label(anasag)
+}
+buttons = {  # butonlar için fonksiyonlar
+    "1": tk.Button(footer, text="Sonraki ", command=func["1"]),
+    "11": tk.Button(footer, text="Önceki", command=func["1"]),
+    "2": tk.Button(footer, text="Sonraki", command=func["2"]),
+    "22": tk.Button(footer, text="Önceki", command=func["2"]),
+    "3": tk.Button(footer, text="Sonraki ", command=func["3"]),
+    "33": tk.Button(footer, text="Önceki", command=func["3"]),
+    "4": tk.Button(footer, text="Sonraki ", command=func["4"]),
+    "5": tk.Button(footer, text="Çıkış", command=quit),
+    "yenile": tk.Button(footer, text="Yenile ", command=func["yenile"]),
+}
+labels = {
+    "başlık": tk.Label(root, text="WIPE", font=("Arial Bold", 50)),
+    "2": tk.Label(root, text="Disk Seçin ve imha edin"),
+    "3": tk.Label(root, text="İmha işlemi sürüyor... "),
+    "4": tk.Label(root, text="İşlem Tamam"),
+}
 
-    pgbars={
-        "1":Progressbar(root,length=200,orient=HORIZONTAL,maximum=100,value=0)}
-    labels["başlık"].pack(expand=YES,fill=BOTH)
-    mlb = MultiListbox(anasol, (('Bağlantı Noktası', 15), ('Cihaz Adı', 50), ('Seri Numarası', 20), ('Boyut', 10), ('Durum', 20)))
-    buttons["2"].pack()
-    footer.pack(side=BOTTOM)
-    root.mainloop()
+screen_width=root.winfo_screenwidth()
+def genislik():
+    if screen_width>1300:
+        genislik=screen_width*50/100
+    elif screen_width<1301:
+        genislik=screen_width*60/100
+    return genislik
+anasol=Frame(root)
+anasol.config(width=genislik())
+anasag=Frame(root)
+anasag.config(width=screen_width-genislik())
+bilgi=Label(anasag)
+labels["başlık"].pack(expand=YES,fill=BOTH)
+mlb = MultiListbox(anasol, (('Bağlantı Noktası', 15), ('Cihaz Adı', 50), ('Seri Numarası', 20), ('Boyut', 10), ('Durum', 20)))
+buttons["2"].pack()
+footer.pack(side=BOTTOM)
+root.mainloop()
 
 
 
