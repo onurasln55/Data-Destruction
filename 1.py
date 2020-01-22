@@ -28,7 +28,7 @@ def page2():
     labels["4"].pack_forget()
     anasol.pack(side=LEFT)
     anasag.pack(side=RIGHT)
-    bilgi.pack()
+    info.pack()
     mlb.pack(expand=YES, fill=BOTH)
 
     buttons["1"].pack_forget()
@@ -38,13 +38,14 @@ def page2():
     buttons["11"].pack()
     buttons["4"].pack_forget()
     refresh()
-    smart()
+    smart_info()
 
 def page3():
     labels["2"].pack_forget()
     labels["3"].pack()
     labels["4"].pack_forget()
     mlb.pack_forget()
+    info.pack_forget()
     Label(root,text=mlb.get(disk)).pack()
     anasol.pack_forget()
     anasag.pack_forget()
@@ -70,6 +71,25 @@ def page4():
     buttons["33"].pack_forget()
     buttons["4"].pack_forget()
     buttons["5"].pack(side=tk.BOTTOM,anchor=tk.SE)
+def ayarlar():
+    settings=tk.Tk()
+    settings.config(width=300,height=300)
+    settings.attributes("-topmost",True)
+    adsoyad=tk.Label(settings,text="Adınız Soyadınız")
+    adsoyad.grid(row=0)
+    name=tk.Entry(settings)
+    name.grid(row=1)
+    firmaadi=tk.Label(settings,text="Firma Adınız")
+    firmaadi.grid(row=2)
+    firma=tk.Entry(settings)
+    firma.grid(row=3)
+    imhaneden=tk.Label(settings,text="İmha Nedeni?")
+    imhaneden.grid(row=4)
+    neden=tk.Entry(settings)
+    neden.grid(row=5)
+    kaydet=tk.Button(settings,text="Kaydet",command="")
+    kaydet.grid(row=6)
+
 #pages end
 # --- functions ---
 sayac=0
@@ -197,14 +217,71 @@ class MultiListbox(Frame):
     def selection_set(self, first, last=None):
         for l in self.lists:
             l.selection_set(first, last)
+
+def smart_filter():
+    with open('s.lst') as file:
+        ss=open("smart.lst","w")
+        for l in enumerate(file):
+           if l[0]>=4:
+             satir=str(l[1])
+             ss.write(satir)
+    ss.close()
+    with open('s.lst') as file:
+        ss=open("smart.lst","w")
+        for l in enumerate(file):
+           if l[0]>=4:
+               satir=str(l[1])
+               ss.write(satir)
+        ss.close()
+    #ss=open("s-islenmis.lst","w")
+    with open("smart.lst") as smart:
+        ss=open("s-islenmis.lst","w")
+        for l in smart.readlines():
+            satir=l.split(':')
+            satir[1]=satir[1].strip()
+            ss.write(satir[1]+"\n")
+        ss.close()
+
 global disk
-def smart():
-    bilgi.after(100,smart)
+def disk_id():
     disk=getir()
-    value=mlb.get(disk)
-    bilgi.config(text=value)
-    print(value)
-    return disk
+    if disk is not None:
+        value=mlb.get(disk)
+        info.config(text=value)
+        return disk
+    else:
+        return None
+def smart_info():
+    info.after(100,smart_info)
+    id=disk_id()
+    if id is not None:
+        if id==0:
+            os.system("smartctl -i /dev/sda >s.lst")
+            smart_filter()
+        elif id==1:
+            os.system("smartctl -i /dev/sdb >s.lst")
+            smart_filter()
+        elif id==2:
+            os.system("smartctl -i /dev/sdc >s.lst")
+            smart_filter()
+        elif id==3:
+            os.system("smartctl -i /dev/sdd >s.lst")
+            smart_filter()
+        elif id==4:
+            os.system("smartctl -i /dev/sdf >s.lst")
+            smart_filter()
+        elif id==5:
+            os.system("smartctl -i /dev/sdg >s.lst")
+            smart_filter()
+        elif id==6:
+            os.system("smartctl -i /dev/sdh >s.lst")
+            smart_filter()
+        elif id==7:
+            os.system("smartctl -i /dev/sdi >s.lst")
+            smart_filter()
+
+
+
 def getir():
     if mlb.curselection():
         index=str(mlb.curselection())
@@ -212,11 +289,14 @@ def getir():
         index=index.replace(',)','')
         index=int(index)
         return index
-
+    else:
+        return None
 # --- main ---
 
 root = tk.Tk()
+root.config(width=600,height=600)
 footer=Frame(root)
+header=Frame(root)
 #root.attributes('-fullscreen',True)
 # lisans=tk.Entry(root)#lisans girdisi
 func = {  # sayfalar için fonksiyon
@@ -224,7 +304,7 @@ func = {  # sayfalar için fonksiyon
     "2": page2,
     "3": page3,
     "4": page4,
-
+    "ayarlar":ayarlar,
 }
 buttons = {  # butonlar için fonksiyonlar
     "1": tk.Button(footer, text="Sonraki ", command=func["1"]),
@@ -235,12 +315,15 @@ buttons = {  # butonlar için fonksiyonlar
     "33": tk.Button(footer, text="Önceki", command=func["3"]),
     "4": tk.Button(footer, text="Sonraki ", command=func["4"]),
     "5": tk.Button(footer, text="Çıkış", command=quit),
+    "ayarlar":tk.Button(header,text="Ayarlar",command=ayarlar)
 }
 labels = {
-    "başlık": tk.Label(root, text="WIPE", font=("Arial Bold", 50)),
+    "başlık": tk.Label(header, text="WIPE", font=("Arial Bold", 50)),
     "2": tk.Label(root, text="Disk Seçin ve imha edin"),
-    "3": tk.Label(root, text="İmha işlemi sürüyor... "),
+    "3": tk.Label(root, text="Yöntem seçin"),
     "4": tk.Label(root, text="İşlem Tamam"),
+
+
 }
 os.system("echo ''>serial.lst")
 screen_width=root.winfo_screenwidth()
@@ -250,14 +333,19 @@ def genislik():
     elif screen_width<1301:
         genislik=screen_width*60/100
     return genislik
+
+header.config(height=30)
+header.config(width=screen_width)
+buttons["ayarlar"].pack(side=RIGHT,anchor=tk.NW)
 anasol=Frame(root)
 anasol.config(width=genislik())
 anasag=Frame(root)
 anasag.config(width=screen_width-genislik())
-bilgi=Label(anasag)
+info=Label(anasag)
 labels["başlık"].pack(expand=YES,fill=BOTH)
 mlb = MultiListbox(anasol, (('Bağlantı Noktası', 15), ('Cihaz Adı', 50), ('Seri Numarası', 20), ('Boyut', 10), ('Durum', 20)))
 buttons["2"].pack()
+header.pack(side=TOP)
 footer.pack(side=BOTTOM)
 root.mainloop()
 
