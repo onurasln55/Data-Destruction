@@ -1,14 +1,15 @@
 import tkinter as tk
 from tkinter import *
+from tkinter import messagebox
 from tkinter.ttk import *
 import os
-from filehash import FileHash
+#from filehash import FileHash
 
 
-import apply as apply
+#import apply as apply
 
 ##pages start
-def page1():
+def anasayfa():
     labels["2"].pack_forget()
     labels["3"].pack_forget()
     labels["4"].pack_forget()
@@ -22,28 +23,31 @@ def page1():
     buttons["3"].pack_forget()
     buttons["33"].pack_forget()
     buttons["4"].pack_forget()
-def page2():
+def disk_secim():
     labels["2"].pack()
     labels["3"].pack_forget()
     labels["4"].pack_forget()
+    labels["kimimha"].pack_forget()
     anasol.pack(side=LEFT)
     anasag.pack(side=RIGHT)
     info.pack()
     mlb.pack(expand=YES, fill=BOTH)
 
     buttons["1"].pack_forget()
+    buttons["11"].pack()
     buttons["2"].pack_forget()
     buttons["22"].pack_forget()
     buttons["3"].pack()
-    buttons["11"].pack()
+    buttons["33"].pack_forget()
     buttons["4"].pack_forget()
     refresh()
     smart_info()
 
-def page3():
+def yontem_sec():
     labels["2"].pack_forget()
     labels["3"].pack()
     labels["4"].pack_forget()
+    labels["kimimha"].pack()
     mlb.pack_forget()
     info.pack_forget()
     Label(root,text=mlb.get(disk)).pack()
@@ -54,12 +58,15 @@ def page3():
     buttons["2"].pack_forget()
     buttons["22"].pack(side=tk.BOTTOM,anchor=tk.SE)
     buttons["3"].pack_forget()
+    buttons["33"].pack_forget()
     buttons["4"].pack(side=tk.BOTTOM,anchor=tk.SE)
 
-def page4():
+
+def imha_ve_rapor():
     labels["2"].pack_forget()
     labels["3"].pack_forget()
     labels["4"].pack()
+    labels["kimimha"].pack_forget()
     anasol.pack_forget()
     anasag.pack_forget()
     mlb.pack_forget()
@@ -71,24 +78,32 @@ def page4():
     buttons["33"].pack_forget()
     buttons["4"].pack_forget()
     buttons["5"].pack(side=tk.BOTTOM,anchor=tk.SE)
+global raporcu
+global firma
+
 def ayarlar():
-    settings=tk.Tk()
-    settings.config(width=300,height=300)
-    settings.attributes("-topmost",True)
-    adsoyad=tk.Label(settings,text="Adınız Soyadınız")
-    adsoyad.grid(row=0)
-    name=tk.Entry(settings)
-    name.grid(row=1)
-    firmaadi=tk.Label(settings,text="Firma Adınız")
-    firmaadi.grid(row=2)
-    firma=tk.Entry(settings)
-    firma.grid(row=3)
-    imhaneden=tk.Label(settings,text="İmha Nedeni?")
-    imhaneden.grid(row=4)
-    neden=tk.Entry(settings)
-    neden.grid(row=5)
-    kaydet=tk.Button(settings,text="Kaydet",command="")
-    kaydet.grid(row=6)
+    ayar=Frame(root)
+    adsoyad=Label(ayar,text="Teknisyen Adı Soyadı")
+    adsoyad.grid(row=1,column=1)
+    raporcu=Entry(ayar)
+    raporcu.grid(row=1,column=2)
+    firmaadi=Label(ayar,text="Firma Adınız")
+    firmaadi.grid(row=2,column=1)
+    firma=Entry(ayar)
+    firma.grid(row=2,column=2)
+    k=Button(ayar,text="Kaydet",command=kaydet)
+    k.grid(row=3,column=2)
+    ayar.pack()
+
+def kaydet():
+    if raporcu is not None:
+        if firma is not None:
+            imhaci=open("imhacilar.lst",'w+');
+            imhaci.write(raporcu+","+firma)
+        else:
+            messagebox.showwarning("Warning","Lütfen firma alanını boş bırakmayın!")
+    else:
+        messagebox.showwarning("Warning","Lütfen isim alanını boş bırakmayın!")
 
 #pages end
 # --- functions ---
@@ -297,15 +312,16 @@ root = tk.Tk()
 root.config(width=600,height=600)
 footer=Frame(root)
 header=Frame(root)
-#root.attributes('-fullscreen',True)
+root.attributes('-fullscreen',True)
 # lisans=tk.Entry(root)#lisans girdisi
 func = {  # sayfalar için fonksiyon
-    "1": page1,
-    "2": page2,
-    "3": page3,
-    "4": page4,
+    "1": anasayfa,
+    "2": disk_secim,
+    "3": yontem_sec,
+    "4": imha_ve_rapor,
     "ayarlar":ayarlar,
 }
+
 buttons = {  # butonlar için fonksiyonlar
     "1": tk.Button(footer, text="Sonraki ", command=func["1"]),
     "11": tk.Button(footer, text="Önceki", command=func["1"]),
@@ -315,14 +331,14 @@ buttons = {  # butonlar için fonksiyonlar
     "33": tk.Button(footer, text="Önceki", command=func["3"]),
     "4": tk.Button(footer, text="Sonraki ", command=func["4"]),
     "5": tk.Button(footer, text="Çıkış", command=quit),
-    "ayarlar":tk.Button(header,text="Ayarlar",command=ayarlar)
+
 }
 labels = {
     "başlık": tk.Label(header, text="WIPE", font=("Arial Bold", 50)),
     "2": tk.Label(root, text="Disk Seçin ve imha edin"),
     "3": tk.Label(root, text="Yöntem seçin"),
     "4": tk.Label(root, text="İşlem Tamam"),
-
+    "kimimha":tk.Label(root,text="İmha edecek kişiyi seç"),
 
 }
 os.system("echo ''>serial.lst")
@@ -334,9 +350,12 @@ def genislik():
         genislik=screen_width*60/100
     return genislik
 
+menubar = Menu(root)
+menubar.add_command(label="Ayarlar", command=func["ayarlar"])
+menubar.add_command(label="Çıkış", command=root.quit)
 header.config(height=30)
 header.config(width=screen_width)
-buttons["ayarlar"].pack(side=RIGHT,anchor=tk.NW)
+root.config(menu=menubar)
 anasol=Frame(root)
 anasol.config(width=genislik())
 anasag=Frame(root)
