@@ -3,8 +3,8 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter.ttk import *
 import os
+import time
 #from filehash import FileHash
-
 
 #import apply as apply
 
@@ -61,7 +61,6 @@ def yontem_sec():
     buttons["33"].pack_forget()
     buttons["4"].pack(side=tk.BOTTOM,anchor=tk.SE)
 
-
 def imha_ve_rapor():
     labels["2"].pack_forget()
     labels["3"].pack_forget()
@@ -78,32 +77,26 @@ def imha_ve_rapor():
     buttons["33"].pack_forget()
     buttons["4"].pack_forget()
     buttons["5"].pack(side=tk.BOTTOM,anchor=tk.SE)
-global raporcu
-global firma
 
 def ayarlar():
-    ayar=Frame(root)
-    adsoyad=Label(ayar,text="Teknisyen Adı Soyadı")
-    adsoyad.grid(row=1,column=1)
-    raporcu=Entry(ayar)
-    raporcu.grid(row=1,column=2)
-    firmaadi=Label(ayar,text="Firma Adınız")
-    firmaadi.grid(row=2,column=1)
-    firma=Entry(ayar)
-    firma.grid(row=2,column=2)
-    k=Button(ayar,text="Kaydet",command=kaydet)
-    k.grid(row=3,column=2)
-    ayar.pack()
-
+    main.pack()
+    label=Label(main, text="Görevli Kişi",font=10)
+    label.grid(row=0)
+    entry1.grid(row=0, column=1)
+    label=Label(main, text="Görevlendiren Firma", font=10)
+    label.grid(row=1)
+    entry2.grid(row=1, column=1)
+    button1=Button(main, text="Kaydet",command=kaydet)
+    button1.grid(row=2, column=1)
 def kaydet():
-    if raporcu is not None:
-        if firma is not None:
-            imhaci=open("imhacilar.lst",'w+');
-            imhaci.write(raporcu+","+firma)
-        else:
-            messagebox.showwarning("Warning","Lütfen firma alanını boş bırakmayın!")
-    else:
-        messagebox.showwarning("Warning","Lütfen isim alanını boş bırakmayın!")
+    raporcu=entry1.get()
+    firma=entry2.get()
+    with open("imhaci.lst",'w') as test:
+        sonuc=test.write(raporcu+","+firma)
+        if sonuc:
+            tk.messagebox.showinfo(title="Başarılı",message="Kaydedilmiştir.")
+            main.pack_forget()
+
 
 #pages end
 # --- functions ---
@@ -142,8 +135,6 @@ def refresh():
                 model[x]=model[x].replace('\n','')
                 name[x]=name[x].replace('\n','')
                 mlb.insert(END, ('%s' % name[x], '%s'% model[x], '%s' % serial[x], '%s'% size[x],'%s'% state[x],))
-
-
 
 class MultiListbox(Frame):
     def __init__(self, master, lists):
@@ -295,8 +286,6 @@ def smart_info():
             os.system("smartctl -i /dev/sdi >s.lst")
             smart_filter()
 
-
-
 def getir():
     if mlb.curselection():
         index=str(mlb.curselection())
@@ -312,7 +301,13 @@ root = tk.Tk()
 root.config(width=600,height=600)
 footer=Frame(root)
 header=Frame(root)
+ayar=Frame(root)
 root.attributes('-fullscreen',True)
+name=StringVar()
+lastname=StringVar()
+main=Frame(root)
+entry1 = Entry(main,textvariable=name)
+entry2 = Entry(main,textvariable=lastname)
 # lisans=tk.Entry(root)#lisans girdisi
 func = {  # sayfalar için fonksiyon
     "1": anasayfa,
