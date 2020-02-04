@@ -3,8 +3,7 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter.ttk import *
 import os
-import time
-#from filehash import FileHash
+import datetime
 
 #import apply as apply
 
@@ -13,6 +12,8 @@ def anasayfa():
     labels["2"].pack_forget()
     labels["3"].pack_forget()
     labels["4"].pack_forget()
+    labels["silinecek"].pack_forget()
+    labels["silme_yontemi"].pack_forget()
     anasol.pack_forget()
     anasag.pack_forget()
     mlb.pack_forget()
@@ -23,15 +24,19 @@ def anasayfa():
     buttons["3"].pack_forget()
     buttons["33"].pack_forget()
     buttons["4"].pack_forget()
+    secim.pack_forget()
+    buttons["seç"].pack_forget()
 def disk_secim():
     labels["2"].pack()
     labels["3"].pack_forget()
     labels["4"].pack_forget()
-    labels["kimimha"].pack_forget()
+    labels["silinecek"].pack_forget()
+    labels["silme_yontemi"].pack_forget()
+    secim.pack_forget()
     anasol.pack(side=LEFT)
     anasag.pack(side=RIGHT)
     info.pack()
-    mlb.pack(expand=YES, fill=BOTH)
+    mlb.pack(expand=YES, fill=BOTH,ipady=(100),side=RIGHT)
 
     buttons["1"].pack_forget()
     buttons["11"].pack()
@@ -40,6 +45,7 @@ def disk_secim():
     buttons["3"].pack()
     buttons["33"].pack_forget()
     buttons["4"].pack_forget()
+    buttons["seç"].pack_forget()
     refresh()
     smart_info()
 
@@ -47,10 +53,12 @@ def yontem_sec():
     labels["2"].pack_forget()
     labels["3"].pack()
     labels["4"].pack_forget()
-    labels["kimimha"].pack()
+    labels["silinecek"].pack()
+    labels["silme_yontemi"].pack()
+    secim.pack()
+    buttons["seç"].pack()
     mlb.pack_forget()
     info.pack_forget()
-    Label(root,text=mlb.get(disk)).pack()
     anasol.pack_forget()
     anasag.pack_forget()
     buttons["1"].pack_forget()
@@ -59,13 +67,16 @@ def yontem_sec():
     buttons["22"].pack(side=tk.BOTTOM,anchor=tk.SE)
     buttons["3"].pack_forget()
     buttons["33"].pack_forget()
+
     buttons["4"].pack(side=tk.BOTTOM,anchor=tk.SE)
 
 def imha_ve_rapor():
     labels["2"].pack_forget()
     labels["3"].pack_forget()
+    labels["silinecek"].pack_forget()
+    labels["silme_yontemi"].pack_forget()
     labels["4"].pack()
-    labels["kimimha"].pack_forget()
+    secim.pack_forget()
     anasol.pack_forget()
     anasag.pack_forget()
     mlb.pack_forget()
@@ -76,17 +87,18 @@ def imha_ve_rapor():
     buttons["3"].pack_forget()
     buttons["33"].pack_forget()
     buttons["4"].pack_forget()
+    buttons["seç"].pack_forget()
     buttons["5"].pack(side=tk.BOTTOM,anchor=tk.SE)
 
 def ayarlar():
-    main.pack()
-    label=Label(main, text="Görevli Kişi",font=10)
-    label.grid(row=0)
+    mainsettings.pack()
+    label=Label(mainsettings, text="Görevli Kişi",font=10)
+    label.grid(row=0,sticky="W")
     entry1.grid(row=0, column=1)
-    label=Label(main, text="Görevlendiren Firma", font=10)
+    label=Label(mainsettings, text="Görevlendiren Firma", font=10)
     label.grid(row=1)
     entry2.grid(row=1, column=1)
-    button1=Button(main, text="Kaydet",command=kaydet)
+    button1=Button(mainsettings, text="Kaydet",command=kaydet)
     button1.grid(row=2, column=1)
 def kaydet():
     raporcu=entry1.get()
@@ -95,7 +107,48 @@ def kaydet():
         sonuc=test.write(raporcu+","+firma)
         if sonuc:
             tk.messagebox.showinfo(title="Başarılı",message="Kaydedilmiştir.")
-            main.pack_forget()
+            mainsettings.pack_forget()
+def ok():
+    print ("Yöntem:" + variable.get())
+    disk=getir()
+    value=mlb.get(disk)
+    print("Disk:%s"%value[0])
+    print("Seri Numarası:%s"%value[2])
+    print("Boyut:%s"%value[3])
+    with open("rapor.txt",'w') as file:
+        tarihsaat = datetime.datetime.now().strftime("%d-%m-%Y %H:%M");
+        file.close()
+        rapor=open("rapor.txt",'a')
+        rapor.write("İşlem Başlangıç Zamanı:")
+        rapor.write(tarihsaat)
+        rapor.write("\n")
+        os.system("shred -vz -n 0 /dev/%s"%value[0])
+        tarihsaat = datetime.datetime.now().strftime("%d-%m-%Y %H:%M");
+        rapor.write("İşlem Bitiş Zamanı:")
+        rapor.write(tarihsaat)
+        yazar=open("imhaci.lst",'r')
+        yazarbilgileri=yazar.readline()
+        parcali=yazarbilgileri.split(',')
+        yazar.close()
+        yazar=parcali[0]
+        firma=parcali[1]
+        rapor.write("Görevli kişi:")
+        rapor.write(yazar)
+        rapor.write("\n")
+        rapor.write("Firma:")
+        rapor.write(firma)
+        rapor.write("\n")
+        rapor.write("Silme Metodu:")
+        rapor.write("")
+
+        rapor.close()
+        tk.messagebox.showinfo('İşlem Bitti','İşlem tamamlanmıştır iyi günler dileriz.')
+def imha_et():
+    MsgBox = tk.messagebox.askquestion ('Emin misiniz?','Doğru diski seçtiğinizden eminseniz evet e tıklayınız.(Yapılan işlemden sonra geri dönüş olmayacaktır)',icon = 'warning')
+    if MsgBox == 'yes':
+        tk.messagebox.showinfo('Uyarı','Yapılan işlem süresince bilgisayarı kapatmayın.İmha edilen diski sistemden çıkartmayın. İşlem bitince ekranda uyarı mesajı olacaktır.')
+        ok()
+
 
 
 #pages end
@@ -225,10 +278,17 @@ class MultiListbox(Frame):
             l.selection_set(first, last)
 
 def smart_filter():
+    with open('s.lst')as usb:
+        for i in usb.readlines():
+            if i.lower().find("unknown usb bridge")!=-1:
+                print(i)
+
     with open('s.lst') as file:
         ss=open("smart.lst","w")
+
         for l in enumerate(file):
            if l[0]>=4:
+
              satir=str(l[1])
              ss.write(satir)
     ss.close()
@@ -239,21 +299,26 @@ def smart_filter():
                satir=str(l[1])
                ss.write(satir)
         ss.close()
-    #ss=open("s-islenmis.lst","w")
-    with open("smart.lst") as smart:
-        ss=open("s-islenmis.lst","w")
-        for l in smart.readlines():
-            satir=l.split(':')
-            satir[1]=satir[1].strip()
-            ss.write(satir[1]+"\n")
-        ss.close()
 
-global disk
+def it_is_smart():
+    sayac=0
+    with open('s.lst')as usb:
+        for i in usb.readlines():
+            if i.lower().find("unknown usb bridge")!=-1:
+                sayac=sayac+1
+    if sayac>0:
+        ss=open("smart.lst","w")
+        ss.write("Cihazda smart özelliği bulunmamaktadır.")
+    else:
+        smart_filter()
+
 def disk_id():
     disk=getir()
     if disk is not None:
         value=mlb.get(disk)
-        info.config(text=value)
+        with open("smart.lst") as file:
+            smartyazisi=file.read()
+        info.config(text=smartyazisi)
         return disk
     else:
         return None
@@ -263,28 +328,21 @@ def smart_info():
     if id is not None:
         if id==0:
             os.system("smartctl -i /dev/sda >s.lst")
-            smart_filter()
         elif id==1:
             os.system("smartctl -i /dev/sdb >s.lst")
-            smart_filter()
         elif id==2:
             os.system("smartctl -i /dev/sdc >s.lst")
-            smart_filter()
         elif id==3:
             os.system("smartctl -i /dev/sdd >s.lst")
-            smart_filter()
         elif id==4:
             os.system("smartctl -i /dev/sdf >s.lst")
-            smart_filter()
         elif id==5:
             os.system("smartctl -i /dev/sdg >s.lst")
-            smart_filter()
         elif id==6:
             os.system("smartctl -i /dev/sdh >s.lst")
-            smart_filter()
         elif id==7:
             os.system("smartctl -i /dev/sdi >s.lst")
-            smart_filter()
+        it_is_smart()
 
 def getir():
     if mlb.curselection():
@@ -299,15 +357,16 @@ def getir():
 
 root = tk.Tk()
 root.config(width=600,height=600)
+root.title("PROWIPE")
 footer=Frame(root)
 header=Frame(root)
-ayar=Frame(root)
-root.attributes('-fullscreen',True)
+bilgi=Frame(root)
+#root.attributes('-fullscreen',True)
 name=StringVar()
 lastname=StringVar()
-main=Frame(root)
-entry1 = Entry(main,textvariable=name)
-entry2 = Entry(main,textvariable=lastname)
+mainsettings=Frame(root)
+entry1 = Entry(mainsettings,textvariable=name)
+entry2 = Entry(mainsettings,textvariable=lastname)
 # lisans=tk.Entry(root)#lisans girdisi
 func = {  # sayfalar için fonksiyon
     "1": anasayfa,
@@ -316,7 +375,6 @@ func = {  # sayfalar için fonksiyon
     "4": imha_ve_rapor,
     "ayarlar":ayarlar,
 }
-
 buttons = {  # butonlar için fonksiyonlar
     "1": tk.Button(footer, text="Sonraki ", command=func["1"]),
     "11": tk.Button(footer, text="Önceki", command=func["1"]),
@@ -326,16 +384,33 @@ buttons = {  # butonlar için fonksiyonlar
     "33": tk.Button(footer, text="Önceki", command=func["3"]),
     "4": tk.Button(footer, text="Sonraki ", command=func["4"]),
     "5": tk.Button(footer, text="Çıkış", command=quit),
-
+    "seç":tk.Button(root, text="Seç", command=imha_et)
 }
 labels = {
-    "başlık": tk.Label(header, text="WIPE", font=("Arial Bold", 50)),
+    "başlık": tk.Label(header, text="PROWIPE", font=("Arial Bold", 50)),
     "2": tk.Label(root, text="Disk Seçin ve imha edin"),
     "3": tk.Label(root, text="Yöntem seçin"),
     "4": tk.Label(root, text="İşlem Tamam"),
-    "kimimha":tk.Label(root,text="İmha edecek kişiyi seç"),
+    "silinecek":tk.Label(bilgi),
+    "silme_yontemi":tk.Label(root,text="Silme yöntemini seçiniz")
+}
+yontem_komutlari={
+    "Zeroes":"-z",
+    "Random Random Zero (6 passes)":"-n 6 -z"
 
 }
+yontemler = [
+"Zeroes",
+"Random Random Zero (6 passes)",
+"NATO Standard (7 passes)",
+"Pseudo-Random",
+"Pseudo-Random & Zeroes (2 passes)"
+]
+variable = StringVar(root)
+variable.set(yontemler[0])
+secim = OptionMenu(root, variable, *yontemler)
+secim.config(width=40)
+
 os.system("echo ''>serial.lst")
 screen_width=root.winfo_screenwidth()
 def genislik():
@@ -362,6 +437,5 @@ buttons["2"].pack()
 header.pack(side=TOP)
 footer.pack(side=BOTTOM)
 root.mainloop()
-
 
 
