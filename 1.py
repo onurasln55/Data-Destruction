@@ -1,113 +1,20 @@
 import tkinter as tk
 from tkinter import *
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 from tkinter.ttk import *
+
 import os
 import datetime
 
-#import apply as apply
 
-##pages start
-def anasayfa():
-    labels["2"].pack_forget()
-    labels["3"].pack_forget()
-    labels["4"].pack_forget()
-    labels["silinecek"].pack_forget()
-    labels["silme_yontemi"].pack_forget()
-    anasol.pack_forget()
-    anasag.pack_forget()
-    mlb.pack_forget()
-    buttons["1"].pack_forget()
-    buttons["11"].pack_forget()
-    buttons["2"].pack(side=tk.BOTTOM,anchor=tk.SE)
-    buttons["22"].pack_forget()
-    buttons["3"].pack_forget()
-    buttons["33"].pack_forget()
-    buttons["4"].pack_forget()
-    secim.pack_forget()
-    buttons["seç"].pack_forget()
-def disk_secim():
-    labels["2"].pack()
-    labels["3"].pack_forget()
-    labels["4"].pack_forget()
-    labels["silinecek"].pack_forget()
-    labels["silme_yontemi"].pack_forget()
-    secim.pack_forget()
-    anasol.pack(side=LEFT)
-    anasag.pack(side=RIGHT)
-    info.pack()
-    mlb.pack(expand=YES, fill=BOTH,ipady=(100),side=RIGHT)
+silme_modlari={
+"Zeroes":"-z",
+"Random Random Zero (6 passes)":"",
+"NATO Standard (7 passes)":"",
+"Pseudo-Random":"",
+"Pseudo-Random & Zeroes (2 passes)":"",
+}
 
-    buttons["1"].pack_forget()
-    buttons["11"].pack()
-    buttons["2"].pack_forget()
-    buttons["22"].pack_forget()
-    buttons["3"].pack()
-    buttons["33"].pack_forget()
-    buttons["4"].pack_forget()
-    buttons["seç"].pack_forget()
-    refresh()
-    smart_info()
-
-def yontem_sec():
-    labels["2"].pack_forget()
-    labels["3"].pack()
-    labels["4"].pack_forget()
-    labels["silinecek"].pack()
-    labels["silme_yontemi"].pack()
-    secim.pack()
-    buttons["seç"].pack()
-    mlb.pack_forget()
-    info.pack_forget()
-    anasol.pack_forget()
-    anasag.pack_forget()
-    buttons["1"].pack_forget()
-    buttons["11"].pack_forget()
-    buttons["2"].pack_forget()
-    buttons["22"].pack(side=tk.BOTTOM,anchor=tk.SE)
-    buttons["3"].pack_forget()
-    buttons["33"].pack_forget()
-
-    buttons["4"].pack(side=tk.BOTTOM,anchor=tk.SE)
-
-def imha_ve_rapor():
-    labels["2"].pack_forget()
-    labels["3"].pack_forget()
-    labels["silinecek"].pack_forget()
-    labels["silme_yontemi"].pack_forget()
-    labels["4"].pack()
-    secim.pack_forget()
-    anasol.pack_forget()
-    anasag.pack_forget()
-    mlb.pack_forget()
-    buttons["1"].pack_forget()
-    buttons["11"].pack_forget()
-    buttons["2"].pack_forget()
-    buttons["22"].pack_forget()
-    buttons["3"].pack_forget()
-    buttons["33"].pack_forget()
-    buttons["4"].pack_forget()
-    buttons["seç"].pack_forget()
-    buttons["5"].pack(side=tk.BOTTOM,anchor=tk.SE)
-
-def ayarlar():
-    mainsettings.pack()
-    label=Label(mainsettings, text="Görevli Kişi",font=10)
-    label.grid(row=0,sticky="W")
-    entry1.grid(row=0, column=1)
-    label=Label(mainsettings, text="Görevlendiren Firma", font=10)
-    label.grid(row=1)
-    entry2.grid(row=1, column=1)
-    button1=Button(mainsettings, text="Kaydet",command=kaydet)
-    button1.grid(row=2, column=1)
-def kaydet():
-    raporcu=entry1.get()
-    firma=entry2.get()
-    with open("imhaci.lst",'w') as test:
-        sonuc=test.write(raporcu+","+firma)
-        if sonuc:
-            tk.messagebox.showinfo(title="Başarılı",message="Kaydedilmiştir.")
-            mainsettings.pack_forget()
 def ok():
     print ("Yöntem:" + variable.get())
     disk=getir()
@@ -132,6 +39,7 @@ def ok():
         yazar.close()
         yazar=parcali[0]
         firma=parcali[1]
+        rapor.write("\n")
         rapor.write("Görevli kişi:")
         rapor.write(yazar)
         rapor.write("\n")
@@ -147,9 +55,8 @@ def imha_et():
     MsgBox = tk.messagebox.askquestion ('Emin misiniz?','Doğru diski seçtiğinizden eminseniz evet e tıklayınız.(Yapılan işlemden sonra geri dönüş olmayacaktır)',icon = 'warning')
     if MsgBox == 'yes':
         tk.messagebox.showinfo('Uyarı','Yapılan işlem süresince bilgisayarı kapatmayın.İmha edilen diski sistemden çıkartmayın. İşlem bitince ekranda uyarı mesajı olacaktır.')
+
         ok()
-
-
 
 #pages end
 # --- functions ---
@@ -187,7 +94,7 @@ def refresh():
                 serial[x]=serial[x].replace('\n','')
                 model[x]=model[x].replace('\n','')
                 name[x]=name[x].replace('\n','')
-                mlb.insert(END, ('%s' % name[x], '%s'% model[x], '%s' % serial[x], '%s'% size[x],'%s'% state[x],))
+                mlb.insert(END, ('%s'% model[x], '%s' % serial[x], '%s'% size[x],))
 
 class MultiListbox(Frame):
     def __init__(self, master, lists):
@@ -315,12 +222,14 @@ def it_is_smart():
 def disk_id():
     disk=getir()
     if disk is not None:
-        value=mlb.get(disk)
         with open("smart.lst") as file:
             smartyazisi=file.read()
         info.config(text=smartyazisi)
         return disk
     else:
+        with open("default_smart.lst") as file:
+            smartyazisi=file.read()
+        info.config(text=smartyazisi)
         return None
 def smart_info():
     info.after(100,smart_info)
@@ -356,86 +265,149 @@ def getir():
 # --- main ---
 
 root = tk.Tk()
-root.config(width=600,height=600)
 root.title("PROWIPE")
-footer=Frame(root)
-header=Frame(root)
-bilgi=Frame(root)
-#root.attributes('-fullscreen',True)
-name=StringVar()
-lastname=StringVar()
-mainsettings=Frame(root)
-entry1 = Entry(mainsettings,textvariable=name)
-entry2 = Entry(mainsettings,textvariable=lastname)
-# lisans=tk.Entry(root)#lisans girdisi
-func = {  # sayfalar için fonksiyon
-    "1": anasayfa,
-    "2": disk_secim,
-    "3": yontem_sec,
-    "4": imha_ve_rapor,
-    "ayarlar":ayarlar,
-}
-buttons = {  # butonlar için fonksiyonlar
-    "1": tk.Button(footer, text="Sonraki ", command=func["1"]),
-    "11": tk.Button(footer, text="Önceki", command=func["1"]),
-    "2": tk.Button(footer, text="Sonraki", command=func["2"]),
-    "22": tk.Button(footer, text="Önceki", command=func["2"]),
-    "3": tk.Button(footer, text="Sonraki ", command=func["3"]),
-    "33": tk.Button(footer, text="Önceki", command=func["3"]),
-    "4": tk.Button(footer, text="Sonraki ", command=func["4"]),
-    "5": tk.Button(footer, text="Çıkış", command=quit),
-    "seç":tk.Button(root, text="Seç", command=imha_et)
-}
-labels = {
-    "başlık": tk.Label(header, text="PROWIPE", font=("Arial Bold", 50)),
-    "2": tk.Label(root, text="Disk Seçin ve imha edin"),
-    "3": tk.Label(root, text="Yöntem seçin"),
-    "4": tk.Label(root, text="İşlem Tamam"),
-    "silinecek":tk.Label(bilgi),
-    "silme_yontemi":tk.Label(root,text="Silme yöntemini seçiniz")
-}
-yontem_komutlari={
-    "Zeroes":"-z",
-    "Random Random Zero (6 passes)":"-n 6 -z"
 
+
+# root.geometry("1024x768")
+root.attributes('-fullscreen',True)
+ayar_penceresi=Toplevel(root)
+
+def ayarlar():
+    ayar_penceresi=Toplevel(root)
+    ayar_penceresi.geometry("500x250")
+    ayar1=Frame(ayar_penceresi)
+
+    ayar1.pack()
+    kaydet=Button(ayar1,text="Kaydet",command=ayar_penceresi.destroy)
+    kaydet.grid(row=6,column=0,columnspan=4)
+
+    label={
+    "m_bilgileri":tk.Label(ayar1,text="Müşteri Bilgileri"),
+    "m_isim":tk.Label(ayar1,text="İsim"),
+    "m_adres":tk.Label(ayar1,text="Adres"),
+    "c_bilgileri":tk.Label(ayar1,text="Cihaz Sahibi Bilgileri"),
+    "c_sahip":tk.Label(ayar1,text="İsim"),
+    "gtp_bilgileri":tk.Label(ayar1,text="Görevli Teknik Personel Bilgileri"),
+    "gtp_isim":tk.Label(ayar1,text="İsim"),
+    "gtp_firma":tk.Label(ayar1,text="Firma"),
+    "io_bilgisi":tk.Label(ayar1,text="İmha Onayı Veren Kişi"),
+    "io_isim":tk.Label(ayar1,text="İsim"),
+    "io_firma":tk.Label(ayar1,text="Firma"),
+    }
+    ######      AYARLAR KİŞİ BİLGİLERİ BAŞLANGIÇ
+    m_isim=StringVar()
+    m_adres=StringVar()
+    c_sahip=StringVar()
+    gtp_isim=StringVar()
+    gtp_firma=StringVar()
+    io_isim=StringVar()
+    io_firma=StringVar()
+    ####        AYARLAR KİŞİ BİLGİLERİ SON
+    entry={
+    "m_isim":tk.Entry(ayar1,textvariable=m_isim),
+    "m_adres":tk.Entry(ayar1,textvariable=m_adres),
+    "c_sahip":tk.Entry(ayar1,textvariable=c_sahip),
+    "gtp_isim":tk.Entry(ayar1,textvariable=gtp_isim),
+    "gtp_firma":tk.Entry(ayar1,textvariable=gtp_firma),
+    "io_isim":tk.Entry(ayar1,textvariable=io_isim),
+    "io_firma":tk.Entry(ayar1,textvariable=io_firma),
+
+    }
+
+    label["m_bilgileri"].grid(row=0,columnspan=2,sticky="W",padx=5,pady=5)
+    label["m_isim"].grid(row=1,column=0,sticky="W",padx=5,pady=5)
+    label["m_adres"].grid(row=2,column=0,sticky="W",padx=5,pady=5)
+    entry["m_isim"].grid(row=1,column=1,sticky="W",padx=5,pady=5)
+    entry["m_adres"].grid(row=2,column=1,sticky="W",padx=5,pady=5)
+
+    label["c_bilgileri"].grid(row=0,column=2,columnspan=2,sticky="W",padx=5,pady=5)
+    label["c_sahip"].grid(row=1,column=2,sticky="W",rowspan=2,padx=5,pady=5)
+    entry["c_sahip"].grid(row=1,column=3,sticky="W",rowspan=2,padx=5,pady=5)
+
+    label["gtp_bilgileri"].grid(row=3,columnspan=2,sticky="W",padx=5,pady=5)
+    label["gtp_isim"].grid(row=4,column=0,sticky="W",padx=5,pady=5)
+    label["gtp_firma"].grid(row=5,column=0,sticky="W",padx=5,pady=5)
+    entry["gtp_isim"].grid(row=4,column=1,sticky="W",padx=5,pady=5)
+    entry["gtp_firma"].grid(row=5,column=1,sticky="W",padx=5,pady=5)
+
+    label["io_bilgisi"].grid(row=3,columnspan=2,column=2,sticky="W",padx=5,pady=5)
+    label["io_isim"].grid(row=4,column=2,sticky="W",padx=5,pady=5)
+    label["io_firma"].grid(row=5,column=2,sticky="W",padx=5,pady=5)
+    entry["io_isim"].grid(row=4,column=3,sticky="W",padx=5,pady=5)
+    entry["io_firma"].grid(row=5,column=3,sticky="W",padx=5,pady=5)
+
+header=Frame(root)
+disklistesi_penceresi=Frame(root)
+smartozellik_penceresi=Frame(root)
+
+silme_penceresi=Frame(root)
+progressbar_penceresi=Frame(root)
+footer=Frame(root)
+
+header.grid(row=0,columnspan=2)
+disklistesi_penceresi.grid(row=1,column=0,padx=15)
+smartozellik_penceresi.grid(row=1,column=1)
+
+silme_penceresi.grid(row=2,column=0,pady=30)
+progressbar_penceresi.grid(row=3)
+footer.grid(row=4)
+
+
+
+# lisans=tk.Entry(root)#lisans girdisi,fill=BOTH
+buttons = {  # butonlar için fonksiyonlar
+    "seç":tk.Button(silme_penceresi, text="Güvenli sil", command=imha_et),
+}
+
+labels = {
+    "başlık": tk.Label(header, text="PROWIPE", font=("Verdana", 30)),
+    "silme_yontemi":tk.Label(silme_penceresi,text="Silme yöntemini seçiniz"),
+    "Disk_Bilgileri":tk.Label(smartozellik_penceresi,text="Disk Bilgileri"),
+    "t_baslik":tk.Label(disklistesi_penceresi,text="Disk Listesi")
 }
 yontemler = [
-"Zeroes",
-"Random Random Zero (6 passes)",
-"NATO Standard (7 passes)",
-"Pseudo-Random",
-"Pseudo-Random & Zeroes (2 passes)"
+"Silme yöntemini seçiniz!",
+"Zeroes Metodu",
+"Gutmann Metodu",
+"NATO Standard Metodu",
+"US Army AR 380-19 Metodu",
+"DoD 5200.28M",
+
 ]
-variable = StringVar(root)
+
+variable = StringVar(silme_penceresi)
 variable.set(yontemler[0])
-secim = OptionMenu(root, variable, *yontemler)
-secim.config(width=40)
+secim = OptionMenu(silme_penceresi, variable, *yontemler)
+secim.config(width=35)
 
 os.system("echo ''>serial.lst")
 screen_width=root.winfo_screenwidth()
 def genislik():
     if screen_width>1300:
-        genislik=screen_width*50/100
+        genislik=screen_width*30/100
     elif screen_width<1301:
-        genislik=screen_width*60/100
+        genislik=screen_width*30/100
     return genislik
-
 menubar = Menu(root)
-menubar.add_command(label="Ayarlar", command=func["ayarlar"])
+menubar.add_command(label="Ayarlar", command=ayarlar)
 menubar.add_command(label="Çıkış", command=root.quit)
 header.config(height=30)
 header.config(width=screen_width)
 root.config(menu=menubar)
-anasol=Frame(root)
-anasol.config(width=genislik())
-anasag=Frame(root)
-anasag.config(width=screen_width-genislik())
-info=Label(anasag)
-labels["başlık"].pack(expand=YES,fill=BOTH)
-mlb = MultiListbox(anasol, (('Bağlantı Noktası', 15), ('Cihaz Adı', 50), ('Seri Numarası', 20), ('Boyut', 10), ('Durum', 20)))
-buttons["2"].pack()
-header.pack(side=TOP)
-footer.pack(side=BOTTOM)
+labels["t_baslik"].pack()
+info=Label(smartozellik_penceresi)
+labels["başlık"].pack(expand=YES,fill=BOTH,side=LEFT)
+mlb = MultiListbox(disklistesi_penceresi, ( ('Cihaz Adı', 20), ('Seri Numarası', 25), ('Boyut', 10)))
+
+secim.pack(fill=BOTH,expand=YES)
+buttons["seç"].pack(padx=(0),pady=(10),fill=BOTH,expand=YES)
+labels["Disk_Bilgileri"].grid(row=0,column=0)
+info.grid(row=1,column=0)
+
+mlb.pack(expand=YES, fill=BOTH,ipady=(50),side=RIGHT)
+refresh()
+smart_info()
+
 root.mainloop()
 
 
