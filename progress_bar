@@ -1,0 +1,23 @@
+import tkinter as tk
+from tkinter.ttk import Progressbar
+
+window=tk.Tk()
+window.title("Progrogress bar")
+window.geometry("400x300")
+number=0
+end_value=10
+
+def amount(number):
+	Progress_Bar["value"]=number
+Progress_Bar=Progressbar(window,orient="horizontal",length=400,mode="determinate")
+Progress_Bar.pack(side="top")
+Progress_Bar["value"]=number
+
+Progress_Bar["maximum"]=end_value
+
+for i in range(1,11):
+    number=number+1
+    print(str(number*10)+"%")
+    Progress_Bar.after(500,amount(number))
+    Progress_Bar.update()
+tk.mainloop()
