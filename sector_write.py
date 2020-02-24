@@ -28,4 +28,4 @@ def wipe(disk,sector_no=0):
     w.close()
 
 if __name__ == "__main__":
-    main(16)
+    main(16) 
