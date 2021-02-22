@@ -6,7 +6,7 @@ firma='Firma:'
 diskbilgileri="disk disk disk"
 
 
-rapor_yazısı=['Bu rapor Tekniknokta Bilişim Teknoloji Hizm. tarafından Hazırlanmış Prowipe yazılımı ile hazırlanmıştır.'
+rapor_yazısı=['Bu rapor ............ tarafından Hazırlanmış .......yazılımı ile hazırlanmıştır.'
               'Konu disk yukarıda belirtilmiştir.'
               'Disk üzerinde yapılan işlem:']
 
